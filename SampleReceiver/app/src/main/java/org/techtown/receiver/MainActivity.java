@@ -1,15 +1,15 @@
 package org.techtown.receiver;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.yanzhenjie.permission.Action;
-import com.yanzhenjie.permission.AndPermission;
-import com.yanzhenjie.permission.runtime.Permission;
-
-import java.util.List;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,27 +18,36 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AndPermission.with(this)
-                .runtime()
-                .permission(Permission.RECEIVE_SMS)
-                .onGranted(new Action<List<String>>() {
-                    @Override
-                    public void onAction(List<String> permissions) {
-                        showToast("허용된 권한 갯수 : " + permissions.size());
-                    }
-                })
-                .onDenied(new Action<List<String>>() {
-                    @Override
-                    public void onAction(List<String> permissions) {
-                        showToast("거부된 권한 갯수 : " + permissions.size());
-                    }
-                })
-                .start();
+        String[] permissions = {Manifest.permission.RECEIVE_SMS};
 
+        checkPermissions(permissions);
     }
 
-    public void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    public void checkPermissions(String[] permissions) {
+        ArrayList<String> targetList = new ArrayList<String>();
+
+        for(int i = 0; i < permissions.length; i++) {
+            String curPermission = permissions[i];
+            int permissionCheck = ContextCompat.checkSelfPermission(this, curPermission);
+
+            if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, curPermission + " 권한 있음.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, curPermission + " 권한 없음.", Toast.LENGTH_SHORT).show();
+
+                if(ActivityCompat.shouldShowRequestPermissionRationale(this, curPermission)) {
+                    Toast.makeText(this, curPermission + " 권한 설명 필요함.", Toast.LENGTH_SHORT).show();
+                } else {
+                    targetList.add(curPermission);
+                }
+            }
+        }
+
+        String[] targets = new String[targetList.size()];
+        targetList.toArray(targets);
+
+        if(targets.length > 0)
+            ActivityCompat.requestPermissions(this, targets, 101);
     }
 
 }

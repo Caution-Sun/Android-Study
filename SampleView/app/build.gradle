@@ -6,7 +6,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "org.techtown.receiver"
+        applicationId "org.techtown.view"
         minSdk 21
         targetSdk 31
         versionCode 1
@@ -35,6 +35,4 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-    implementation 'androidx.work:work-runtime-ktx:2.7.0'
 }
