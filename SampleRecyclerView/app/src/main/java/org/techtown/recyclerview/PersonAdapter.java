@@ -10,8 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder>{
+public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder> implements OnPersonItemClickListener{
     ArrayList<Person> items = new ArrayList<Person>();
+    OnPersonItemClickListener listener;
 
     @NonNull
     @Override
@@ -19,7 +20,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.person_item, parent, false);
 
-        return new ViewHolder(itemView);
+        return new ViewHolder(itemView, this);
     }
 
     @Override
@@ -49,15 +50,37 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder
         return items.size();
     }
 
+    public void setOnItemClickListener(OnPersonItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public void onItemClick(ViewHolder holder, View view, int position) {
+        if(listener != null){
+            listener.onItemClick(holder, view, position);
+        }
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
         TextView textView2;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, final OnPersonItemClickListener listener) {
             super(itemView);
 
             textView = itemView.findViewById(R.id.textView);
             textView2 = itemView.findViewById(R.id.textView2);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+
+                    if(listener != null){
+                        listener.onItemClick(ViewHolder.this, v, position);
+                    }
+                }
+            });
         }
 
         public void setItem(Person item){
