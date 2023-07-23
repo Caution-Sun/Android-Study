@@ -1,8 +1,11 @@
 package org.techtown.thread;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +14,8 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
     int value = 0;
     TextView textView;
+
+    MainHandler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
                 thread.start();
             }
         });
+
+        handler = new MainHandler();
     }
 
     class BackgroundThread extends Thread {
@@ -38,8 +45,26 @@ public class MainActivity extends AppCompatActivity {
 
                 value += 1;
                 Log.d("Thread", "value : " + value);
-                textView.setText("value : " + value);
+
+                Message message = handler.obtainMessage();
+                Bundle bundle = new Bundle();
+                bundle.putInt("value", value);
+                message.setData(bundle);
+
+                handler.sendMessage(message);
             }
+        }
+    }
+
+    class MainHandler extends Handler {
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+
+            Bundle bundle = msg.getData();
+            int value = bundle.getInt("value");
+            textView.setText("value 값 : " + value);
         }
     }
 }
