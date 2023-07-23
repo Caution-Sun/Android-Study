@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     int value = 0;
     TextView textView;
 
-    MainHandler handler;
+    Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +32,6 @@ public class MainActivity extends AppCompatActivity {
                 thread.start();
             }
         });
-
-        handler = new MainHandler();
     }
 
     class BackgroundThread extends Thread {
@@ -46,25 +44,13 @@ public class MainActivity extends AppCompatActivity {
                 value += 1;
                 Log.d("Thread", "value : " + value);
 
-                Message message = handler.obtainMessage();
-                Bundle bundle = new Bundle();
-                bundle.putInt("value", value);
-                message.setData(bundle);
-
-                handler.sendMessage(message);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        textView.setText("value 값 : " + value);
+                    }
+                });
             }
-        }
-    }
-
-    class MainHandler extends Handler {
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-
-            Bundle bundle = msg.getData();
-            int value = bundle.getInt("value");
-            textView.setText("value 값 : " + value);
         }
     }
 }
