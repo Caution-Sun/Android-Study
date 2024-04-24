@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
+import android.widget.EditText;
 
 import com.example.databinding.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
+
+    EditText editText;
 
     private ActivityMainBinding binding;
 
